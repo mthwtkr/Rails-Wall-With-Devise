@@ -1,0 +1,49 @@
+<% content_for :title do %>
+	The Wall
+<% end %>
+
+<% content_for :header do %>
+	<h4>The Wall</h4>
+	<div id="user_nav">
+		<% if user_signed_in? %>
+			<p>Logged in as: <%= current_user.email %></p>
+			<%= button_to 'Logout', destroy_user_session_path, class: "btn btn-danger btn-xs", method: :delete %>
+		<% else %>
+			<%= link_to 'Sign up', new_user_registration_path, class: "btn btn-success btn-xs" %>
+			<%= link_to 'Login', new_user_session_path, class: "btn btn-primary btn-xs" %>
+		<% end %>
+	</div>
+<% end %>
+
+<% content_for :body do %>
+	<div id="content" class="col-md-10">
+		<% if user_signed_in? %>
+			<h4>Post a message</h4>
+			<%= simple_form_for @message, url: messages_path, html: {class: 'form'} do |f| %>
+				<%= f.input :content, as: :text, label: false %>
+				<%= f.submit "Post a message", class: 'btn btn-xs btn-primary' %>
+			<% end %>
+		<% end %>
+
+		<% @messages.each do |message| %>
+			<% user = @users.find(message.user_id) %>
+			<h5 class="bold"><%= user.email %> - <%= message.created_at.strftime('%B %d, %Y') %></h5>
+			<p><%= message.content %></p>
+
+			<div class="comments">
+				<% message.comments.all.each do |comment| %>
+					<% user = comment.user %>
+					<h5 class="bold"><%= user.email %> - <%= comment.created_at.strftime('%B %d, %Y') %></h5>
+					<p><%= comment.content %></p>
+				<% end %>
+				
+				<% if user_signed_in? %>
+					<h6 class="bold">Post a comment</h6>
+					<%= simple_form_for @comment, url: comments_path, html: {class: 'form'} do |f| %>
+						<%= f.input :message_id, as: :hidden, input_html: { value: message.id } %>
+						<%= f.input :content, as: :text, label: false %>
+						<%= f.submit "Post a comment", class: 'btn btn-xs btn-success' %>
+					<% end %>
+				<% end %>
+		<% end %>
+<% end %>

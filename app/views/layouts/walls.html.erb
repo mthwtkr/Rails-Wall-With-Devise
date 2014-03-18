@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= yield :title %></title>
+  <%= stylesheet_link_tag    "walls", media: "all" %>
+  <%= javascript_include_tag "walls" %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+	<div class="container">
+		<div class="masthead">
+			<%= yield :header %>
+		</div>
+	    <div class="row">
+			<%= yield :body %>
+		</div>
+	</div>
+</body>
+</html>
